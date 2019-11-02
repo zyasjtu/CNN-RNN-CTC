@@ -81,7 +81,7 @@ def next_batch(img_dir, data_set, batch_size, char_map, start_idx=None):
         width = int(1.0 * w * height / h)
         img_list[idx, :, :w, :] = cv2.resize(bgr, (width, height)).astype(np.float32)
         gt_list.append(gt)
-        len_list[idx] = int(w / 4)
+        len_list[idx] = int(width / 4)
 
     return img_list, gt_list, __sparse_convert(gt_list, char_map), len_list
 

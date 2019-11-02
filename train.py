@@ -38,7 +38,7 @@ def train(img_dir, ant_path, map_path):
     #
     train_data, valid_data = data_processor.split_data(ant_path, 0.3)
     char_map = json.load(open(map_path, 'r'))
-    img_input = tf.placeholder(dtype=tf.float32, shape=[batch_size, data_processor.IMG_H, None, 3])
+    img_input = tf.placeholder(dtype=tf.float32, shape=[batch_size, data_processor.IMG_H, None, data_processor.IMG_C])
     gt_input = tf.sparse_placeholder(dtype=tf.int32)
     len_input = tf.placeholder(dtype=tf.int32, shape=[batch_size])
     #
@@ -47,8 +47,7 @@ def train(img_dir, ant_path, map_path):
     crnn_out = network.build(images=img_input, seq_len=len_input)
     ctc_loss = tf.reduce_mean(tf.nn.ctc_loss(labels=gt_input,
                                              inputs=crnn_out,
-                                             sequence_length=len_input,
-                                             ignore_longer_outputs_than_inputs=True))
+                                             sequence_length=len_input))
     decoded, _ = tf.nn.ctc_beam_search_decoder(crnn_out, len_input, merge_repeated=False)
     seq_dist = tf.reduce_mean(tf.edit_distance(tf.cast(decoded[0], tf.int32), gt_input))
     #

@@ -112,9 +112,9 @@ class CRNN():
                                                         dtype=tf.float32,
                                                         sequence_length=seq_len,
                                                         scope='bilstm')
-        w = tf.Variable(tf.random_normal([2 * n_unit, self.__num_classes]), name='w')
-        b = tf.Variable(tf.random_normal([self.__num_classes]), name='b')
-        logits = tf.matmul(tf.reshape(net, [-1, 2 * n_unit]), w) + b
+        w = tf.Variable(tf.truncated_normal([n_layer * n_unit, self.__num_classes], stddev=0.01), name='w')
+        b = tf.Variable(tf.truncated_normal([self.__num_classes], stddev=0.01), name='b')
+        logits = tf.matmul(tf.reshape(net, [-1, n_layer * n_unit]), w) + b
         logits = tf.reshape(logits, [input_tensor.get_shape().as_list()[0], -1, self.__num_classes])
         return tf.transpose(logits, (1, 0, 2), name='rnn_out')
 
